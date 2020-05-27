@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Makalah Parser</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script
+      src="https://kit.fontawesome.com/bd1b110a05.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <div style="display: flex; align-items: center;">
+        <img src="/assets/images/books.png" style="height: 75px;" />
+        &nbsp;&nbsp;&nbsp;
+        <div>
+          <h1>
+            Makalah Parser
+            <br />
+            <span style="font-size: 14px;">
+              by
+              <a href="https://instagram.com/rommyarb" target="_blank"
+                >@rommyarb</a
+              >
+              &amp;
+              <a href="https://instagram.com/rivirayuana" target="_blank"
+                >@rivirayuana</a
+              >
+            </span>
+          </h1>
+        </div>
+      </div>
+
+      <hr />
+      <div>
+        <p>Upload multiple PDF files to generate graphic:</p>
+        <input
+          type="file"
+          ref="fileinput"
+          multiple
+          accept=".pdf"
+          :disabled="processing"
+        />
+        <br /><br />
+        <div v-if="processing" style="display: flex; align-items: center;">
+          <img src="img/gears.gif" style="height: 50px;" />
+          &nbsp;&nbsp;
+          <p>
+            <i class="fa fa-file" aria-hidden="true"></i>
+            {{currentFilename}}<br /><b>{{statusLog}}</b><br />
+          </p>
+        </div>
+        <button
+          class="button blue"
+          v-else
+          type="button"
+          @click="initProcessFullText"
+        >
+          UPLOAD NOW
+        </button>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/engine.js?v=1.0.0"></script>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+vue [v-cloak] {
+  display: none;
+}
+body {
+  background: url(/assets/images/bg_tile.jpg);
+  background-repeat: repeat;
+}
+
+.button {
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+.blue {
+  color: white;
+  background-color: cornflowerblue;
+}
