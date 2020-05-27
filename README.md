@@ -1,10 +1,8 @@
-<img style="float:right" src="./assets/images/logo.png" alt="Makalah Parser" height="75">
-
-# Makalah Parser
+# 📚 Makalah Parser
 
 ### How to run:
 
-1. Just open the index.html in browser and you're good to go.
+1. Just open the index.html in the browser and you're good to go.
 
 ### How it works:
 
