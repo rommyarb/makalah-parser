@@ -1,8 +1,5 @@
-<div style="display:flex;align-items:center">
-<img src="./assets/images/logo.png" alt="Makalah Parser" height="60">
-&nbsp;&nbsp;&nbsp;
+<img style="float:left" src="./assets/images/logo.png" alt="Makalah Parser" height="60">
 <h1>Makalah Parser</h1>
-</div>
 
 ## How to run:
 
