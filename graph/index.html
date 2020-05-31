@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Makalah Parser</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -50,40 +50,21 @@
           </h1>
         </div>
       </div>
-
-      <hr />
       <div>
-        <p>Upload multiple PDF files:</p>
-        <input
-          type="file"
-          ref="fileinput"
-          multiple
-          accept=".pdf"
-          :disabled="processing"
-        />
-        <br /><br />
-        <div v-show="processing" style="display: flex; align-items: center;">
-          <img src="assets/images/readingbook.gif" style="height: 80px;" />
-          &nbsp;&nbsp;
-          <p>
-            <i class="fa fa-file" aria-hidden="true"></i>
-            {{currentFilename}}<br /><b>{{statusLog}}</b><br />
-          </p>
+        <div id="chart">
+          <div id="control">
+            <button type="button" onclick="toggleNameAndYear()">
+              Name & Year Only
+            </button>
+            <button type="button" onclick="toggleSize()">
+              Size Only
+            </button>
+            <button type="button" onclick="reloadGraph()">Reset</button>
+          </div>
         </div>
-        <button
-          class="button blue"
-          v-show="!processing"
-          type="button"
-          @click="initProcessFullText"
-        >
-          UPLOAD NOW
-        </button>
       </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.17.1/parser.min.js"></script>
-    <script src="js/lib/FileSaver.min.js"></script>
-    <script src="js/app.js?v=1.0.0"></script>
+    <script src="/js/lib/d3.v4.min.js"></script>
+    <script src="/js/graph.js"></script>
   </body>
 </html>

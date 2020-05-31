@@ -103,10 +103,14 @@ var app = new Vue({
             // PUBLISHED YEAR
             var publishedYear = jsonObj["TEI"]["teiHeader"]["fileDesc"][
               "sourceDesc"
-            ]["biblStruct"]["monogr"]["imprint"]["date"]["@_when"]
+            ]["biblStruct"]["monogr"]["imprint"]
               ? jsonObj["TEI"]["teiHeader"]["fileDesc"]["sourceDesc"][
                   "biblStruct"
-                ]["monogr"]["imprint"]["date"]["@_when"]
+                ]["monogr"]["imprint"]["date"]
+                ? jsonObj["TEI"]["teiHeader"]["fileDesc"]["sourceDesc"][
+                    "biblStruct"
+                  ]["monogr"]["imprint"]["date"]["@_when"]
+                : null
               : null
 
             // AUTHOR(S)
@@ -131,14 +135,18 @@ var app = new Vue({
               theAuthor = authors.join(" & ").replace(/\s+/g, " ").trim()
             } else {
               var author = authors
-              var roleName = author["persName"]
-                ? author["persName"]["roleName"]
-                : null
-              var surname = author["persName"]
-                ? author["persName"]["surname"]
-                : null
-              var fullname = (roleName ? roleName + " " : "") + surname
-              theAuthor = fullname.replace(/\s+/g, " ").trim()
+              if (author) {
+                var roleName = author["persName"]
+                  ? author["persName"]["roleName"]
+                  : null
+                var surname = author["persName"]
+                  ? author["persName"]["surname"]
+                  : null
+                var fullname = (roleName ? roleName + " " : "") + surname
+                theAuthor = fullname.replace(/\s+/g, " ").trim()
+              } else {
+                theAuthor = null
+              }
             }
 
             var references = []
@@ -151,7 +159,7 @@ var app = new Vue({
               references = refDiv["listBibl"]["biblStruct"]
             }
 
-            if (references) {
+            if (references && Array.isArray(references)) {
               // START ITERATION HERE
 
               for (var ref of references) {
@@ -261,6 +269,7 @@ var app = new Vue({
                   } else {
                     // console.log("checkNode doesn't exists, pushing new node")
                     // push to nodes
+
                     this.nodes.push(node)
                   }
                 } else {
@@ -270,7 +279,7 @@ var app = new Vue({
             }
           }
 
-          updateGraph(this.nodes)
+          // updateGraph(this.nodes)
 
           /////////////////////////////////////////////////////////////////////////
 
@@ -281,15 +290,23 @@ var app = new Vue({
             // )
             this.startProcessFullText(i + 1)
           } else {
+            this.removeBeforeUnloadEvent()
             // console.log("🏁🏁 FINISHED 🏁🏁")
             this.processing = false
             this.finished = true
 
             // save to json
-            var blob = new Blob([JSON.stringify(this.nodes)], {
-              type: "application/json; charset=UTF-8",
-            })
-            saveAs(blob, "hasil_parse_" + files.length + "_file.json")
+            // var blob = new Blob([JSON.stringify(this.nodes)], {
+            //   type: "application/json; charset=UTF-8",
+            // })
+            // saveAs(blob, "hasil_parse_" + files.length + "_file.json")
+
+            // filter
+            var nodes = this.nodes.filter((node) => node.citedBy.length >= 10)
+
+            // save to localstorage
+            window.localStorage.setItem("data", JSON.stringify(nodes))
+            window.location.href = "graph"
           }
         } catch (e) {
           console.error("ERROR:", e)

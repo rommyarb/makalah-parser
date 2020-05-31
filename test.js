@@ -1,4 +1,4 @@
-var dataURL = "https://rommyarb.dev/burivira/graph/data.json"
+var dataURL = "data.json"
 var showNameAndYear = true
 var showSize = true
 var labels
@@ -28,9 +28,7 @@ var simulation = d3
     d3
       .forceLink()
       .id(function (d) {
-        return (
-          d.author + " " + d.publishedYear + " (Size: " + d.citedBy.length + ")"
-        )
+        return d.id
       })
       .distance(80)
   )
@@ -41,7 +39,7 @@ var simulation = d3
     d3
       .forceCollide()
       .radius(function (d) {
-        return d.citedBy.length + 0.5
+        return d.size + 0.5
       })
       .iterations(4)
   )
@@ -51,16 +49,15 @@ var simulation = d3
 fetch(dataURL)
   .then((r) => r.json())
   .then((r) => {
-    // graph = r
-    graph = JSON.parse(window.localStorage.getItem("data"))
-    simulation.nodes(graph)
-    simulation.force("link").links([])
+    graph = r
+    simulation.nodes(graph.nodes)
+    simulation.force("link").links(graph.links)
 
     var link = svg
       .append("g")
       .attr("class", "link")
       .selectAll("line")
-      .data([])
+      .data(graph.links)
       .enter()
       .append("line")
 
@@ -68,17 +65,21 @@ fetch(dataURL)
       .append("g")
       .attr("class", "nodes")
       .selectAll("circle")
-      .data(graph)
+      .data(graph.nodes)
       .enter()
       .append("circle")
 
       //Setting node radius by size value. If 'size' key doesn't exist, set radius to 9
       .attr("r", function (d) {
-        return d.citedBy.length * 1
+        if (d.hasOwnProperty("size")) {
+          return d.size * 1
+        } else {
+          return 9
+        }
       })
       //Colors by 'size' value
       .style("fill", function (d) {
-        return color(d.citedBy.length)
+        return color(d.size)
       })
       .call(
         d3
@@ -93,30 +94,26 @@ fetch(dataURL)
       .attr("dx", 12)
       .attr("dy", ".35em")
       .text(function (d) {
-        return (
-          d.author + " " + d.publishedYear + " (Size: " + d.citedBy.length + ")"
-        )
+        return d.id
       })
 
     labels = svg
       .append("g")
       .attr("class", "label")
       .selectAll("text")
-      .data(graph)
+      .data(graph.nodes)
       .enter()
       .append("text")
       .attr("dx", 6)
       .attr("dy", ".35em")
       .style("font-size", 10)
       .text(function (d) {
-        return (
-          d.author + " " + d.publishedYear + " (Size: " + d.citedBy.length + ")"
-        )
+        return d.label
       })
 
-    simulation.nodes(graph).on("tick", ticked)
+    simulation.nodes(graph.nodes).on("tick", ticked)
 
-    simulation.force("link").links([])
+    simulation.force("link").links(graph.links)
 
     function ticked() {
       link
@@ -173,17 +170,20 @@ function dragended(d) {
 }
 
 function toggleNameAndYear() {
-  graph.forEach((node) => {
+  graph.nodes.forEach((node) => {
     if (showNameAndYear) {
-      node.label = node.author + " " + node.publishedYear
+      var split = node.label.split(" (")
+      node.label = split[0]
     }
   })
   renderLabel()
 }
 function toggleSize() {
-  graph.forEach((node) => {
+  graph.nodes.forEach((node) => {
     if (showSize) {
-      node.label = "Size: " + node.citedBy.length
+      var split = node.label.split(" (")
+      var sizeOnly = split[1].replace("Size: ", "").replace(")", "")
+      node.label = sizeOnly
     }
   })
   renderLabel()
@@ -195,7 +195,7 @@ function renderLabel() {
     .append("g")
     .attr("class", "label")
     .selectAll("text")
-    .data(graph)
+    .data(graph.nodes)
     .enter()
     .append("text")
     .attr("dx", -6)
