@@ -2,7 +2,8 @@
 
 ### How to run:
 
-1. Just open the index.html in the browser and you're good to go.
+1. Clone/download all the files.
+2. Open index.html in the browser.
 
 ### How it works:
 
