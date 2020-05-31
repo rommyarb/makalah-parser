@@ -21,3 +21,4 @@
 
 - VueJS
 - FontAwesome Kit
+- D3.js v4
