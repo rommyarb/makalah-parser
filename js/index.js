@@ -1,7 +1,5 @@
-// This site's Engine v1.0.0
-// by @rommyarb
-
-var app = new Vue({
+Vue.use(VueMaterial.default)
+new Vue({
   el: "#app",
   data: {
     finished: false,
@@ -35,6 +33,7 @@ var app = new Vue({
         citedBy: [{ nama: "ohohoh" }, { nama: "ohohoh" }],
       },
     ],
+    fileChosen: false,
   },
   computed: {
     nodesJson() {
@@ -43,6 +42,7 @@ var app = new Vue({
   },
   methods: {
     initProcessFullText() {
+      this.statusLog = "Processing..."
       this.startProcessFullText(0)
     },
     startProcessFullText(i, retry = false) {
@@ -302,7 +302,10 @@ var app = new Vue({
             // saveAs(blob, "hasil_parse_" + files.length + "_file.json")
 
             // filter
-            var nodes = this.nodes.filter((node) => node.citedBy.length >= 10)
+            var minimum = 5
+            var nodes = this.nodes.filter(
+              (node) => node.citedBy.length >= minimum
+            )
 
             // save to localstorage
             window.localStorage.setItem("data", JSON.stringify(nodes))

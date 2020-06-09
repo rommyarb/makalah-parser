@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Makalah Parser</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css" />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -23,14 +22,23 @@
       href="/assets/images/favicon-16x16.png"
     />
     <link rel="manifest" href="/assets/site.webmanifest" />
-    <script
-      src="https://kit.fontawesome.com/bd1b110a05.js"
-      crossorigin="anonymous"
-    ></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/vue-material/dist/vue-material.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/vue-material/dist/theme/default.css"
+    />
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
   </head>
   <body>
     <div id="app" v-cloak>
-      <div style="display: flex; align-items: center;">
+      <div class="md-layout md-alignment-center" style="padding: 10px 0px;">
         <img src="/assets/images/logo.png" style="height: 75px;" />
         &nbsp;&nbsp;&nbsp;
         <div>
@@ -50,21 +58,69 @@
           </h1>
         </div>
       </div>
-      <div>
-        <div id="chart">
-          <div id="control">
-            <button type="button" onclick="toggleNameAndYear()">
-              Name & Year Only
-            </button>
-            <button type="button" onclick="toggleSize()">
-              Size Only
-            </button>
-            <button type="button" onclick="reloadGraph()">Reset</button>
-          </div>
-        </div>
+      <hr />
+      <md-button @click="window.location.href='/'">
+        <small>&larr; Parse Again</small>
+      </md-button>
+
+      <div style="height: 10px;"></div>
+      <div class="md-layout md-alignment-center">
+        Load JSON file:&nbsp;
+        <input
+          style="
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background-color: white;
+          "
+          type="file"
+        />
       </div>
+      <div style="height: 10px;"></div>
+      <div class="md-layout md-alignment-center">
+        <small
+          :style="{'color':log.type=='success'?'green':(log.type=='error'?'red':'black')}"
+          ><b>{{log.text}}</b>
+        </small>
+      </div>
+      <div style="height: 10px;"></div>
+      <div class="md-layout md-alignment-center">
+        <md-switch
+          v-model="showAuthors"
+          class="md-primary"
+          @change="toggleLegends"
+        >
+          <small>Authors</small>
+        </md-switch>
+        <md-switch
+          v-model="showPublishedYear"
+          class="md-primary"
+          @change="toggleLegends"
+        >
+          <small>Published Year</small>
+        </md-switch>
+        <md-switch
+          v-model="showSize"
+          class="md-primary"
+          @change="toggleLegends"
+        >
+          <small>Size</small>
+        </md-switch>
+        <!-- <md-button
+          class="md-raised md-accent md-dense"
+          @click="resetGraph"
+          :disabled="resetDisabled"
+        >
+          <small>Reset</small>
+        </md-button> -->
+      </div>
+      <div id="chart"></div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/vue-material"></script>
     <script src="/js/lib/d3.v4.min.js"></script>
-    <script src="/js/graph.js"></script>
+    <!-- <script src="/js/graph.js"></script> -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.17.1/parser.min.js"></script> -->
+    <script src="/js/lib/FileSaver.min.js"></script>
+    <script src="/js/graph-vue.js"></script>
   </body>
 </html>

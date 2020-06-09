@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Makalah Parser</title>
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -23,14 +22,27 @@
       href="/assets/images/favicon-16x16.png"
     />
     <link rel="manifest" href="/assets/site.webmanifest" />
-    <script
-      src="https://kit.fontawesome.com/bd1b110a05.js"
-      crossorigin="anonymous"
-    ></script>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/vue-material/dist/vue-material.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/vue-material/dist/theme/default.css"
+    />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
   </head>
   <body>
     <div id="app" v-cloak>
-      <div style="display: flex; align-items: center;">
+      <md-progress-bar
+        :style="{'visibility':processing?'unset':'hidden'}"
+        md-mode="indeterminate"
+      ></md-progress-bar>
+      <div class="md-layout md-alignment-center" style="padding: 10px 0px;">
         <img src="/assets/images/logo.png" style="height: 75px;" />
         &nbsp;&nbsp;&nbsp;
         <div>
@@ -50,40 +62,56 @@
           </h1>
         </div>
       </div>
-
       <hr />
-      <div>
-        <p>Upload multiple PDF files:</p>
-        <input
-          type="file"
-          ref="fileinput"
-          multiple
-          accept=".pdf"
-          :disabled="processing"
-        />
-        <br /><br />
-        <div v-show="processing" style="display: flex; align-items: center;">
-          <img src="assets/images/readingbook.gif" style="height: 80px;" />
-          &nbsp;&nbsp;
-          <p>
-            <i class="fa fa-file" aria-hidden="true"></i>
-            {{currentFilename}}<br /><b>{{statusLog}}</b><br />
-          </p>
+      <div class="md-layout md-alignment-center">
+        <div>
+          <div class="md-layout md-alignment-center">
+            <p>Upload multiple PDF files:</p>
+            &nbsp;&nbsp;
+            <input
+              type="file"
+              ref="fileinput"
+              multiple
+              accept=".pdf"
+              :disabled="processing"
+              @change="fileChosen=true"
+              style="
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                background-color: white;
+              "
+            />
+          </div>
+          <div style="height: 10px;"></div>
+          <div class="md-layout md-alignment-center">
+            <div
+              v-show="processing"
+              style="display: flex; align-items: center; padding: 0px 10px;"
+            >
+              <img src="assets/images/readingbook.gif" style="height: 80px;" />
+              &nbsp;&nbsp;
+              <p>
+                <i class="fa fa-file" aria-hidden="true"></i>
+                {{currentFilename}}<br /><b>{{statusLog}}</b><br />
+              </p>
+            </div>
+            <md-button
+              class="md-raised md-primary"
+              v-show="!processing"
+              @click="initProcessFullText"
+              :disabled="!fileChosen"
+            >
+              UPLOAD NOW!
+            </md-button>
+          </div>
         </div>
-        <button
-          class="button blue"
-          v-show="!processing"
-          type="button"
-          @click="initProcessFullText"
-        >
-          UPLOAD NOW
-        </button>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/vue-material"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.17.1/parser.min.js"></script>
     <script src="js/lib/FileSaver.min.js"></script>
-    <script src="js/app.js?v=1.0.0"></script>
+    <script src="js/index.js?v=1.0.0"></script>
   </body>
 </html>

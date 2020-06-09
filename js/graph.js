@@ -1,8 +1,8 @@
-var dataURL = "https://rommyarb.dev/burivira/graph/data.json"
+// var dataURL = "https://rommyarb.dev/burivira/graph/data.json"
 var showNameAndYear = true
 var showSize = true
 var labels
-var graph = {}
+var graph = []
 
 var svg = d3
   .select("div#chart")
@@ -11,10 +11,15 @@ var svg = d3
   .attr("height", "100%")
   .call(
     d3.zoom().on("zoom", function () {
-      svg.attr("transform", d3.event.transform)
+      var t = d3.event.transform
+      svg.attr("transform", t)
+      // svg.selectAll(".node").attr("transform", t)
+      // svg.selectAll(".label").attr("transform", `translate(${t.x},${t.y})`)
     })
   )
   .append("g")
+
+var nodes = svg
 
 var color = d3.scaleOrdinal(d3.schemeCategory20c)
 // var nodeRadius = 20; // for collide force
@@ -48,112 +53,112 @@ var simulation = d3
 // .force("x", d3.forceX().strength(0.00001))
 // .force("y", d3.forceY().strength(0.00001));
 
-fetch(dataURL)
-  .then((r) => r.json())
-  .then((r) => {
-    // graph = r
-    graph = JSON.parse(window.localStorage.getItem("data"))
-    simulation.nodes(graph)
-    simulation.force("link").links([])
+function init() {
+  // graph = r
+  var data = window.localStorage.getItem("data")
+  graph = data ? JSON.parse(data) : []
+  // simulation.nodes(graph)
+  // simulation.force("link").links([])
 
-    var link = svg
-      .append("g")
-      .attr("class", "link")
-      .selectAll("line")
-      .data([])
-      .enter()
-      .append("line")
+  // var link = svg
+  //   .append("g")
+  //   .attr("class", "link")
+  //   .selectAll("line")
+  //   .data([])
+  //   .enter()
+  //   .append("line")
 
-    var node = svg
-      .append("g")
-      .attr("class", "nodes")
-      .selectAll("circle")
-      .data(graph)
-      .enter()
-      .append("circle")
+  nodes = svg
+    .append("g")
+    .attr("class", "node")
+    .selectAll("circle")
+    .data(graph)
+    .enter()
+    .append("circle")
 
-      //Setting node radius by size value. If 'size' key doesn't exist, set radius to 9
-      .attr("r", function (d) {
-        return d.citedBy.length * 1
-      })
-      //Colors by 'size' value
-      .style("fill", function (d) {
-        return color(d.citedBy.length)
-      })
-      .call(
-        d3
-          .drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended)
+    //Setting node radius by size value. If 'size' key doesn't exist, set radius to 9
+    .attr("r", function (d) {
+      return d.citedBy.length * 1
+    })
+    //Colors by 'size' value
+    .style("fill", function (d) {
+      return color(d.citedBy.length)
+    })
+    .call(
+      d3
+        .drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended)
+    )
+
+  nodes
+    .append("svg:title")
+    .attr("dx", 12)
+    .attr("dy", ".35em")
+    .text(function (d) {
+      return (
+        d.author + " " + d.publishedYear + " (Size: " + d.citedBy.length + ")"
       )
+    })
 
-    node
-      .append("svg:title")
-      .attr("dx", 12)
-      .attr("dy", ".35em")
-      .text(function (d) {
-        return (
-          d.author + " " + d.publishedYear + " (Size: " + d.citedBy.length + ")"
-        )
-      })
+  labels = svg
+    .append("g")
+    .attr("class", "label")
+    .selectAll("text")
+    .data(graph)
+    .enter()
+    .append("text")
+    .attr("dx", 6)
+    .attr("dy", ".35em")
+    .style("font-size", 10)
+    .text(function (d) {
+      return (
+        d.author + " " + d.publishedYear + " (Size: " + d.citedBy.length + ")"
+      )
+    })
 
-    labels = svg
-      .append("g")
-      .attr("class", "label")
-      .selectAll("text")
-      .data(graph)
-      .enter()
-      .append("text")
-      .attr("dx", 6)
-      .attr("dy", ".35em")
-      .style("font-size", 10)
-      .text(function (d) {
-        return (
-          d.author + " " + d.publishedYear + " (Size: " + d.citedBy.length + ")"
-        )
-      })
+  simulation.nodes(graph).on("tick", ticked)
+  simulation.force("link").links([])
+}
 
-    simulation.nodes(graph).on("tick", ticked)
-
-    simulation.force("link").links([])
-
-    function ticked() {
-      link
-        .attr("x1", function (d) {
-          return d.source.x
-        })
-        .attr("y1", function (d) {
-          return d.source.y
-        })
-        .attr("x2", function (d) {
-          return d.target.x
-        })
-        .attr("y2", function (d) {
-          return d.target.y
-        })
-
-      node
-        .attr("cx", function (d) {
-          return d.x
-        })
-        .attr("cy", function (d) {
-          return d.y
-        })
-      labels
-        .attr("x", function (d) {
-          return d.x
-        })
-        .attr("y", function (d) {
-          return d.y
-        })
-    }
-  })
+init()
 
 setTimeout(function () {
   simulation.force("charge", d3.forceManyBody().strength(0))
   simulation.alpha(1).restart()
-}, 2000)
+}, 1500)
+
+function ticked() {
+  // link
+  //   .attr("x1", function (d) {
+  //     return d.source.x
+  //   })
+  //   .attr("y1", function (d) {
+  //     return d.source.y
+  //   })
+  //   .attr("x2", function (d) {
+  //     return d.target.x
+  //   })
+  //   .attr("y2", function (d) {
+  //     return d.target.y
+  //   })
+
+  nodes
+    .attr("cx", function (d) {
+      return d.x
+    })
+    .attr("cy", function (d) {
+      return d.y
+    })
+  labels
+    .attr("x", function (d) {
+      return d.x
+    })
+    .attr("y", function (d) {
+      return d.y
+    })
+}
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart()
@@ -209,4 +214,21 @@ function renderLabel() {
   while (elements.length > 0) {
     elements[0].parentNode.removeChild(elements[0])
   }
+}
+
+var i = 0
+function reloadGraph() {
+  svg.selectAll("circle").remove()
+  svg.selectAll("text").remove()
+
+  init()
+
+  simulation
+    .force("charge", d3.forceManyBody().strength(-2))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+
+  setTimeout(function () {
+    simulation.force("charge", d3.forceManyBody().strength(0))
+    simulation.alpha(1).restart()
+  }, 1500)
 }

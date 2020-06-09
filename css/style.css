@@ -1,4 +1,4 @@
-vue [v-cloak] {
+[v-cloak] {
   display: none;
 }
 body {
@@ -6,10 +6,6 @@ body {
   background-repeat: repeat;
 }
 
-.button {
-  padding: 5px 10px;
-  border-radius: 4px;
-}
 .blue {
   color: white;
   background-color: cornflowerblue;
@@ -37,5 +33,11 @@ svg {
   stroke-width: 1.5px;
 }
 #chart {
+  margin: 0px 0px;
+  padding: 0px 10px;
   width: 100%;
+}
+
+#app {
+  padding: 0px 0px;
 }
