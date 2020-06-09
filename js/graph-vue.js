@@ -78,7 +78,7 @@ new Vue({
   methods: {
     init() {
       var localData = window.localStorage.getItem("data")
-      if (localData) {
+      if (localData && localData !== "[]") {
         this.jsonData = JSON.parse(localData)
         this.log = {
           text: "✔ Loaded data from latest parse.",
