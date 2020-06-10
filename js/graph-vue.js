@@ -12,6 +12,7 @@ new Vue({
     simulation: null,
     zoom: null,
     log: { text: "", type: "default" },
+    timer: null,
   },
   mounted() {
     var svg = d3
@@ -74,6 +75,19 @@ new Vue({
       }
       return false
     },
+    tableData() {
+      var data = []
+      for (var [i, item] of this.jsonData.entries()) {
+        data.push([
+          i + 1,
+          item.title,
+          item.author,
+          item.publishedYear,
+          item.citedBy.length,
+        ])
+      }
+      return data
+    },
   },
   methods: {
     init() {
@@ -81,8 +95,8 @@ new Vue({
       if (localData && localData !== "[]") {
         this.jsonData = JSON.parse(localData)
         this.log = {
-          text: "✔ Loaded data from latest parse.",
-          type: "success",
+          text: "> Loaded latest data.",
+          type: "default",
         }
       } else {
         this.log = {
@@ -151,6 +165,8 @@ new Vue({
           )
         })
       this.simulation.nodes(this.jsonData).on("tick", this.ticked)
+      this.stopCharge()
+      this.initTable()
     },
     ticked() {
       this.nodes
@@ -204,7 +220,7 @@ new Vue({
         return d.label
       })
     },
-    resetGraph() {
+    reloadGraph() {
       this.showAuthors = true
       this.showPublishedYear = true
       this.showSize = true
@@ -213,6 +229,59 @@ new Vue({
       this.svg.selectAll("text").remove()
 
       this.init()
+    },
+    stopCharge() {
+      if (this.timer) {
+        window.clearTimeout(this.timer)
+      }
+      this.timer = window.setTimeout(() => {
+        this.simulation.force("charge", d3.forceManyBody().strength(0))
+        this.simulation.alpha(1).restart()
+      }, 1500)
+    },
+    downloadJsonFile() {
+      var blob = new Blob([JSON.stringify(this.jsonData)], {
+        type: "application/json; charset=UTF-8",
+      })
+      saveAs(blob, "hasil_parse.json")
+    },
+    loadJsonFile() {
+      var files = this.$refs.fileinput.files
+      var jsonFile = files[0]
+      var reader = new FileReader()
+      reader.addEventListener("load", (e) => {
+        window.localStorage.setItem("data", e.target.result)
+        this.reloadGraph()
+        this.log = { text: "✔ Loaded data from JSON file.", type: "success" }
+      })
+      reader.readAsText(jsonFile)
+    },
+    initTable() {
+      // document.getElementById("table").outerHTML = ""
+      // var newDiv = window.document.createElement("div")
+      // newDiv.setAttribute("id", "table")
+      // var afterDiv = document.getElementById("afterTable")
+      // window.document.body.insertBefore(newDiv, afterDiv)
+
+      new gridjs.Grid({
+        columns: [
+          "",
+          "Title",
+          "Author(s)",
+          "Published Year",
+          "Cited By Amount",
+        ],
+        data: this.tableData,
+        search: {
+          enabled: true,
+          placeholder: "Search...",
+        },
+        pagination: {
+          enabled: true,
+          limit: 5,
+          summary: true,
+        },
+      }).render(document.getElementById("table"))
     },
   },
 })

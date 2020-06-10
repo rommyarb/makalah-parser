@@ -3,37 +3,14 @@ new Vue({
   el: "#app",
   data: {
     finished: false,
-    msg: "Bambang",
     processing: false,
     currentFilename: "",
     statusLog: "",
     xmlFiles: [],
     errors: [],
-    nodes: [
-      {
-        author: "Bambang",
-        publishedYear: "2020",
-        citedBy: [
-          { nama: "ohohoh" },
-          { nama: "ohohoh" },
-          { nama: "ohohoh" },
-          { nama: "ohohoh" },
-          { nama: "ohohoh" },
-        ],
-      },
-      {
-        author: "Bambang 2",
-        publishedYear: "2020",
-        citedBy: [{ nama: "ohohoh" }, { nama: "ohohoh" }],
-      },
-
-      {
-        author: "Bambang 3",
-        publishedYear: "2018",
-        citedBy: [{ nama: "ohohoh" }, { nama: "ohohoh" }],
-      },
-    ],
+    nodes: [],
     fileChosen: false,
+    minimumCitedByAmount: 5,
   },
   computed: {
     nodesJson() {
@@ -302,9 +279,8 @@ new Vue({
             // saveAs(blob, "hasil_parse_" + files.length + "_file.json")
 
             // filter
-            var minimum = 5
             var nodes = this.nodes.filter(
-              (node) => node.citedBy.length >= minimum
+              (node) => node.citedBy.length >= this.minimumCitedByAmount
             )
 
             // save to localstorage

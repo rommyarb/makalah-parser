@@ -65,8 +65,19 @@
       <hr />
       <div class="md-layout md-alignment-center">
         <div>
+          <div style="text-align: center;">
+            <md-button
+              class="md-raised md-dense md-default"
+              @click="window.location.href='graph'"
+              style="height: 24px;"
+              ><small>Load JSON File</small></md-button
+            >
+          </div>
+          <div style="text-align: center;">
+            <span>Or</span>
+          </div>
           <div class="md-layout md-alignment-center">
-            <p>Upload multiple PDF files:</p>
+            <p>Upload new PDF files:</p>
             &nbsp;&nbsp;
             <input
               type="file"
@@ -82,7 +93,16 @@
               "
             />
           </div>
-          <div style="height: 10px;"></div>
+          <div class="md-layout md-alignment-center">
+            Minimum Cited By Amount:&nbsp;&nbsp;
+            <input
+              style="width: 50px;"
+              type="number"
+              v-model="minimumCitedByAmount"
+              :disabled="processing"
+            />
+          </div>
+          <div style="height: 20px;"></div>
           <div class="md-layout md-alignment-center">
             <div
               v-show="processing"

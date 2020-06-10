@@ -34,6 +34,10 @@
       rel="stylesheet"
       href="https://unpkg.com/vue-material/dist/theme/default.css"
     />
+    <link
+      href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" type="text/css" href="../css/style.css" />
   </head>
   <body>
@@ -57,22 +61,28 @@
             </span>
           </h1>
         </div>
+        <md-button
+          @click="window.location.href='../'"
+          style="position: absolute; top: 10px; left: 10px;"
+        >
+          <small>&larr; Parse Again</small>
+        </md-button>
       </div>
       <hr />
-      <md-button @click="window.location.href='../'">
-        <small>&larr; Parse Again</small>
-      </md-button>
 
       <div style="height: 10px;"></div>
       <div class="md-layout md-alignment-center">
         Load JSON file:&nbsp;
         <input
+          type="file"
+          ref="fileinput"
+          accept=".json"
+          @change="loadJsonFile"
           style="
             border: 1px solid #ccc;
             border-radius: 3px;
             background-color: white;
           "
-          type="file"
         />
       </div>
       <div style="height: 10px;"></div>
@@ -81,8 +91,21 @@
           :style="{'color':log.type=='success'?'green':(log.type=='error'?'red':'black')}"
           ><b>{{log.text}}</b>
         </small>
+        <md-button
+          v-if="jsonData.length>0"
+          @click="downloadJsonFile"
+          class="md-raised md-dense"
+          style="background-color: #05ae1c; height: 24px;"
+        >
+          <small style="color: white;">DOWNLOAD JSON FILE</small></md-button
+        >
       </div>
       <div style="height: 10px;"></div>
+      <div style="padding: 0px 10px;">
+        <div id="table"></div>
+        <div id="afterTable"></div>
+      </div>
+      <div style="height: 20px;"></div>
       <div class="md-layout md-alignment-center">
         <md-switch
           v-model="showAuthors"
@@ -121,6 +144,7 @@
     <!-- <script src="../js/graph.js"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.17.1/parser.min.js"></script> -->
     <script src="../js/lib/FileSaver.min.js"></script>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.production.min.js"></script>
     <script src="../js/graph-vue.js"></script>
   </body>
 </html>
