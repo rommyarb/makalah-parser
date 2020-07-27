@@ -26,8 +26,8 @@ new Vue({
       this.processFullText(i, retry);
     },
     async processFullText(i, retry) {
-      // var url = "https://grobid.rommyarb.dev/api/processFulltextDocument"
-      var url = "http://localhost:8070/api/processFulltextDocument";
+      var url = "https://grobid.rommyarb.dev/api/processFulltextDocument"
+      // var url = "http://localhost:8070/api/processFulltextDocument";
       var form = new FormData();
       var files = this.$refs.fileinput.files;
       var file = files[i];
