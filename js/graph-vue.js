@@ -1,4 +1,4 @@
-Vue.use(VueMaterial.default)
+Vue.use(VueMaterial.default);
 new Vue({
   el: "#app",
   data: {
@@ -22,19 +22,19 @@ new Vue({
       .attr("height", "100%")
       .call(
         d3.zoom().on("zoom", () => {
-          var t = d3.event.transform
-          svg.attr("transform", t)
+          var t = d3.event.transform;
+          svg.attr("transform", t);
           // svg.selectAll(".node").attr("transform", t)
           // svg.selectAll(".label").attr("transform", `translate(${t.x},${t.y})`)
         })
       )
-      .append("g")
+      .append("g");
 
-    this.svg = svg
-    this.nodes = svg
+    this.svg = svg;
+    this.nodes = svg;
 
-    var width = window.innerWidth
-    var height = window.innerHeight
+    var width = window.innerWidth;
+    var height = window.innerHeight;
 
     this.simulation = d3
       .forceSimulation()
@@ -50,7 +50,7 @@ new Vue({
               " (Size: " +
               d.citedBy.length +
               ")"
-            )
+            );
           })
           .distance(80)
       )
@@ -61,50 +61,50 @@ new Vue({
         d3
           .forceCollide()
           .radius(function (d) {
-            return d.citedBy.length + 0.5
+            return d.citedBy.length + 0.5;
           })
           .iterations(4)
-      )
+      );
 
-    this.init()
+    this.init();
   },
   computed: {
     resetDisabled() {
       if (this.showAuthors && this.showPublishedYear && this.showSize) {
-        return true
+        return true;
       }
-      return false
+      return false;
     },
     tableData() {
-      var data = []
+      var data = [];
       for (var [i, item] of this.jsonData.entries()) {
         data.push([
           i + 1,
-          item.title,
+          // item.title,
           item.author,
           item.publishedYear,
           item.citedBy.length,
-        ])
+        ]);
       }
-      return data
+      return data;
     },
   },
   methods: {
     init() {
-      var localData = window.localStorage.getItem("data")
+      var localData = window.localStorage.getItem("data");
       if (localData && localData !== "[]") {
-        this.jsonData = JSON.parse(localData)
+        this.jsonData = JSON.parse(localData);
         this.log = {
           text: "> Loaded latest data.",
           type: "default",
-        }
+        };
       } else {
         this.log = {
           text: "(No data loaded)",
           type: "default",
-        }
+        };
       }
-      var color = d3.scaleOrdinal(d3.schemeCategory20c)
+      var color = d3.scaleOrdinal(d3.schemeCategory20c);
 
       this.nodes = this.svg
         .append("g")
@@ -115,11 +115,11 @@ new Vue({
         .append("circle")
         //Setting node radius by size value. If 'size' key doesn't exist, set radius to 9
         .attr("r", function (d) {
-          return d.citedBy.length * 1
+          return d.citedBy.length * 1;
         })
         //Colors by 'size' value
         .style("fill", function (d) {
-          return color(d.citedBy.length)
+          return color(d.citedBy.length);
         })
         .call(
           d3
@@ -127,7 +127,7 @@ new Vue({
             .on("start", this.dragstarted)
             .on("drag", this.dragged)
             .on("end", this.dragended)
-        )
+        );
 
       this.nodes
         .append("svg:title")
@@ -141,8 +141,8 @@ new Vue({
             " (Size: " +
             d.citedBy.length +
             ")"
-          )
-        })
+          );
+        });
 
       this.labels = this.svg
         .append("g")
@@ -162,99 +162,125 @@ new Vue({
             " (Size: " +
             d.citedBy.length +
             ")"
-          )
-        })
-      this.simulation.nodes(this.jsonData).on("tick", this.ticked)
-      this.stopCharge()
-      this.initTable()
+          );
+        });
+      this.simulation.nodes(this.jsonData).on("tick", this.ticked);
+      this.stopCharge();
+      this.initTable();
     },
     ticked() {
       this.nodes
         .attr("cx", function (d) {
-          return d.x
+          return d.x;
         })
         .attr("cy", function (d) {
-          return d.y
-        })
+          return d.y;
+        });
       this.labels
         .attr("x", function (d) {
-          return d.x
+          return d.x;
         })
         .attr("y", function (d) {
-          return d.y
-        })
+          return d.y;
+        });
     },
     dragstarted(d) {
-      if (!d3.event.active) this.simulation.alphaTarget(0.3).restart()
-      d.fx = d.x
-      d.fy = d.y
+      if (!d3.event.active) this.simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
     },
     dragged(d) {
-      d.fx = d3.event.x
-      d.fy = d3.event.y
+      d.fx = d3.event.x;
+      d.fy = d3.event.y;
     },
     dragended(d) {
-      if (!d3.event.active) this.simulation.alphaTarget(0)
-      d.fx = null
-      d.fy = null
+      if (!d3.event.active) this.simulation.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
     },
     toggleLegends() {
       this.jsonData.forEach((node) => {
-        var authors = this.showAuthors ? node.author : ""
-        var publishedYear = this.showPublishedYear ? node.publishedYear : ""
-        var size = this.showSize ? "(Size: " + node.citedBy.length + ")" : ""
+        var authors = this.showAuthors ? node.author : "";
+        var publishedYear = this.showPublishedYear ? node.publishedYear : "";
+        var size = this.showSize ? "(Size: " + node.citedBy.length + ")" : "";
 
         var joined =
           authors +
           (this.showAuthors ? " " : "") +
           publishedYear +
           (this.showPublishedYear ? " " : "") +
-          size
+          size;
 
-        node.label = joined
-      })
-      this.reRenderLabel()
+        node.label = joined;
+      });
+      this.reRenderLabel();
     },
     reRenderLabel() {
       this.labels.text(function (d) {
-        return d.label
-      })
+        return d.label;
+      });
     },
     reloadGraph() {
-      this.showAuthors = true
-      this.showPublishedYear = true
-      this.showSize = true
+      this.showAuthors = true;
+      this.showPublishedYear = true;
+      this.showSize = true;
 
-      this.svg.selectAll("circle").remove()
-      this.svg.selectAll("text").remove()
+      this.svg.selectAll("circle").remove();
+      this.svg.selectAll("text").remove();
 
-      this.init()
+      this.init();
     },
     stopCharge() {
       if (this.timer) {
-        window.clearTimeout(this.timer)
+        window.clearTimeout(this.timer);
       }
       this.timer = window.setTimeout(() => {
-        this.simulation.force("charge", d3.forceManyBody().strength(0))
-        this.simulation.alpha(1).restart()
-      }, 1500)
+        this.simulation.force("charge", d3.forceManyBody().strength(0));
+        this.simulation.alpha(1).restart();
+      }, 1500);
     },
     downloadJsonFile() {
       var blob = new Blob([JSON.stringify(this.jsonData)], {
         type: "application/json; charset=UTF-8",
-      })
-      saveAs(blob, "hasil_parse.json")
+      });
+      saveAs(blob, "hasil_parse.json");
+    },
+    downloadExcelFile() {
+      var wb = XLSX.utils.book_new();
+      wb.Props = {
+        Title: "Makalah Parser",
+        Subject: "Hasil Parse",
+        Author: "@rommyarb",
+        CreatedDate: new Date(),
+      };
+      wb.SheetNames.push("Sheet 1");
+      var ws_data = [
+        ["", "Author(s)", "Published Year", "Cited By Amount"],
+        ...this.tableData,
+      ];
+
+      var ws = XLSX.utils.aoa_to_sheet(ws_data);
+      wb.Sheets["Sheet 1"] = ws;
+      var s = XLSX.write(wb, { bookType: "xlsx", type: "binary" });
+      // save
+      var buf = new ArrayBuffer(s.length); //convert s to arrayBuffer
+      var view = new Uint8Array(buf); //create uint8array as viewer
+      for (var i = 0; i < s.length; i++) view[i] = s.charCodeAt(i) & 0xff; //convert to octet
+      saveAs(
+        new Blob([buf], { type: "application/octet-stream" }),
+        "hasil_parse.xlsx"
+      );
     },
     loadJsonFile() {
-      var files = this.$refs.fileinput.files
-      var jsonFile = files[0]
-      var reader = new FileReader()
+      var files = this.$refs.fileinput.files;
+      var jsonFile = files[0];
+      var reader = new FileReader();
       reader.addEventListener("load", (e) => {
-        window.localStorage.setItem("data", e.target.result)
-        this.reloadGraph()
-        this.log = { text: "✔ Loaded data from JSON file.", type: "success" }
-      })
-      reader.readAsText(jsonFile)
+        window.localStorage.setItem("data", e.target.result);
+        this.reloadGraph();
+        this.log = { text: "✔ Loaded data from JSON file.", type: "success" };
+      });
+      reader.readAsText(jsonFile);
     },
     initTable() {
       // document.getElementById("table").outerHTML = ""
@@ -266,7 +292,7 @@ new Vue({
       new gridjs.Grid({
         columns: [
           "",
-          "Title",
+          // "Title",
           "Author(s)",
           "Published Year",
           "Cited By Amount",
@@ -281,7 +307,7 @@ new Vue({
           limit: 5,
           summary: true,
         },
-      }).render(document.getElementById("table"))
+      }).render(document.getElementById("table"));
     },
   },
-})
+});

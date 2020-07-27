@@ -1,4 +1,4 @@
-Vue.use(VueMaterial.default)
+Vue.use(VueMaterial.default);
 new Vue({
   el: "#app",
   data: {
@@ -14,32 +14,33 @@ new Vue({
   },
   computed: {
     nodesJson() {
-      return JSON.stringify(this.nodes)
+      return JSON.stringify(this.nodes);
     },
   },
   methods: {
     initProcessFullText() {
-      this.statusLog = "Processing..."
-      this.startProcessFullText(0)
+      this.statusLog = "Processing...";
+      this.startProcessFullText(0);
     },
     startProcessFullText(i, retry = false) {
-      this.processFullText(i, retry)
+      this.processFullText(i, retry);
     },
     async processFullText(i, retry) {
-      var url = "https://grobid.rommyarb.dev/api/processFulltextDocument"
-      var form = new FormData()
-      var files = this.$refs.fileinput.files
-      var file = files[i]
+      // var url = "https://grobid.rommyarb.dev/api/processFulltextDocument"
+      var url = "http://localhost:8070/api/processFulltextDocument";
+      var form = new FormData();
+      var files = this.$refs.fileinput.files;
+      var file = files[i];
       if (file) {
         if (!retry) {
-          this.currentFilename = file.name
+          this.currentFilename = file.name;
           // this.statusLog = "Parsing " + (i + 1) + " of " + files.length + " files...";
         }
-        this.addBeforeUnloadEvent()
-        form.append("input", file)
-        this.processing = true
+        this.addBeforeUnloadEvent();
+        form.append("input", file);
+        this.processing = true;
         try {
-          var that = this
+          var that = this;
           var r = await axios.post(url, form, {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -47,34 +48,34 @@ new Vue({
             onUploadProgress: function (progressEvent) {
               var completed = Math.round(
                 (progressEvent.loaded / progressEvent.total) * 100
-              )
+              );
               if (completed < 100) {
-                that.statusLog = "Uploading " + completed + " %"
+                that.statusLog = "Uploading " + completed + " %";
               } else {
                 that.statusLog =
-                  "Parsing " + (i + 1) + " of " + files.length + " files..."
+                  "Parsing " + (i + 1) + " of " + files.length + " files...";
               }
             },
-          })
+          });
 
-          var xmlData = r.data
+          var xmlData = r.data;
 
           /////////////////////////////////////////////////////////////////////////
           if (parser.validate(xmlData)) {
             var options = {
               ignoreAttributes: false,
-            }
-            var jsonObj = parser.parse(xmlData, options)
+            };
+            var jsonObj = parser.parse(xmlData, options);
 
             // TITLE
             var title =
               jsonObj["TEI"]["teiHeader"]["fileDesc"]["titleStmt"]["title"][
                 "#text"
-              ]
+              ];
             var authors =
               jsonObj["TEI"]["teiHeader"]["fileDesc"]["sourceDesc"][
                 "biblStruct"
-              ]["analytic"]["author"]
+              ]["analytic"]["author"];
             // console.log("TITLE:", title)
 
             // PUBLISHED YEAR
@@ -88,52 +89,52 @@ new Vue({
                     "biblStruct"
                   ]["monogr"]["imprint"]["date"]["@_when"]
                 : null
-              : null
+              : null;
 
             // AUTHOR(S)
-            var theAuthor = ""
+            var theAuthor = "";
             if (Array.isArray(authors)) {
               for (var [j, author] of authors.entries()) {
                 if (author) {
                   var roleName = author["persName"]
                     ? author["persName"]["roleName"]
-                    : null
+                    : null;
                   var surname = author["persName"]
                     ? author["persName"]["surname"]
-                    : null
-                  var fullname = (roleName ? roleName + " " : "") + surname
+                    : null;
+                  var fullname = (roleName ? roleName + " " : "") + surname;
                   if (fullname != undefined && fullname != "undefined") {
-                    authors[j] = fullname
+                    authors[j] = fullname;
                   }
                 } else {
-                  authors[j] = null
+                  authors[j] = null;
                 }
               }
-              theAuthor = authors.join(" & ").replace(/\s+/g, " ").trim()
+              theAuthor = authors.join(" & ").replace(/\s+/g, " ").trim();
             } else {
-              var author = authors
+              var author = authors;
               if (author) {
                 var roleName = author["persName"]
                   ? author["persName"]["roleName"]
-                  : null
+                  : null;
                 var surname = author["persName"]
                   ? author["persName"]["surname"]
-                  : null
-                var fullname = (roleName ? roleName + " " : "") + surname
-                theAuthor = fullname.replace(/\s+/g, " ").trim()
+                  : null;
+                var fullname = (roleName ? roleName + " " : "") + surname;
+                theAuthor = fullname.replace(/\s+/g, " ").trim();
               } else {
-                theAuthor = null
+                theAuthor = null;
               }
             }
 
-            var references = []
-            var refDiv = jsonObj["TEI"]["text"]["back"]["div"]
+            var references = [];
+            var refDiv = jsonObj["TEI"]["text"]["back"]["div"];
             if (Array.isArray(refDiv)) {
               references = refDiv.find(
                 (item) => item["@_type"] == "references"
-              )["listBibl"]["biblStruct"]
+              )["listBibl"]["biblStruct"];
             } else {
-              references = refDiv["listBibl"]["biblStruct"]
+              references = refDiv["listBibl"]["biblStruct"];
             }
 
             if (references && Array.isArray(references)) {
@@ -141,51 +142,51 @@ new Vue({
 
               for (var ref of references) {
                 // Ref Title
-                var titleRef = ref["monogr"]["title"]["#text"]
+                var titleRef = ref["monogr"]["title"]["#text"];
 
                 // Ref Author
-                var authorsRef = ref["analytic"]
+                var authorsRef = ref["analytic"];
                 if (authorsRef) {
-                  authorsRef = ref["analytic"]["author"]
+                  authorsRef = ref["analytic"]["author"];
                 } else {
-                  authorsRef = ref["monogr"]["author"]
+                  authorsRef = ref["monogr"]["author"];
                 }
-                var theAuthorRef = "" // 1
+                var theAuthorRef = ""; // 1
                 if (Array.isArray(authorsRef)) {
                   for (var [j, author] of authorsRef.entries()) {
                     if (author) {
                       var roleName = author["persName"]
                         ? author["persName"]["roleName"]
-                        : null
+                        : null;
                       var surname = author["persName"]
                         ? author["persName"]["surname"]
-                        : null
-                      var fullname = (roleName ? roleName + " " : "") + surname
+                        : null;
+                      var fullname = (roleName ? roleName + " " : "") + surname;
                       if (fullname != undefined && fullname != "undefined") {
-                        authorsRef[j] = fullname
+                        authorsRef[j] = fullname;
                       }
                     } else {
-                      authorsRef[j] = null
+                      authorsRef[j] = null;
                     }
                   }
                   // console.log("authorsRef:", authorsRef)
                   theAuthorRef = authorsRef
                     .join(" & ")
                     .replace(/\s+/g, " ")
-                    .trim()
+                    .trim();
                 } else {
                   if (authorsRef) {
-                    var author = authorsRef
+                    var author = authorsRef;
                     var roleName = author["persName"]
                       ? author["persName"]["roleName"]
-                      : null
+                      : null;
                     var surname = author["persName"]
                       ? author["persName"]["surname"]
-                      : null
-                    var fullname = (roleName ? roleName + " " : "") + surname
-                    theAuthorRef = fullname.replace(/\s+/g, " ").trim()
+                      : null;
+                    var fullname = (roleName ? roleName + " " : "") + surname;
+                    theAuthorRef = fullname.replace(/\s+/g, " ").trim();
                   } else {
-                    theAuthorRef = null
+                    theAuthorRef = null;
                   }
                 }
 
@@ -193,7 +194,7 @@ new Vue({
                   // Ref Published Year
                   var publishedYearRef = ref["monogr"]["imprint"]["date"]
                     ? ref["monogr"]["imprint"]["date"]["@_when"]
-                    : null
+                    : null;
 
                   var node = {
                     title: titleRef,
@@ -206,7 +207,7 @@ new Vue({
                         publishedYear: publishedYear,
                       },
                     ],
-                  }
+                  };
 
                   // console.log("Filename:", file.name)
                   // console.log("NODE:", node)
@@ -216,11 +217,11 @@ new Vue({
                       mainNode.author === node.author &&
                       mainNode.publishedYear === node.publishedYear
                     ) {
-                      return true
+                      return true;
                     } else {
-                      return false
+                      return false;
                     }
-                  })
+                  });
 
                   if (checkNode) {
                     // console.warn("checkNode exists, adding to citedBy....")
@@ -229,7 +230,7 @@ new Vue({
                       (item) =>
                         item.author == theAuthor &&
                         item.publishedYear == publishedYear
-                    )
+                    );
                     if (checkCitedBy) {
                       // console.log("citedBy already exist")
                     } else {
@@ -241,13 +242,13 @@ new Vue({
                           author: theAuthor,
                           publishedYear: publishedYear,
                         },
-                      ]
+                      ];
                     }
                   } else {
                     // console.log("checkNode doesn't exists, pushing new node")
                     // push to nodes
 
-                    this.nodes.push(node)
+                    this.nodes.push(node);
                   }
                 } else {
                   // console.warn("The ref author is null.")
@@ -265,12 +266,12 @@ new Vue({
             // console.log(
             // "========================================================================================="
             // )
-            this.startProcessFullText(i + 1)
+            this.startProcessFullText(i + 1);
           } else {
-            this.removeBeforeUnloadEvent()
+            this.removeBeforeUnloadEvent();
             // console.log("🏁🏁 FINISHED 🏁🏁")
-            this.processing = false
-            this.finished = true
+            this.processing = false;
+            this.finished = true;
 
             // save to json
             // var blob = new Blob([JSON.stringify(this.nodes)], {
@@ -281,28 +282,28 @@ new Vue({
             // filter
             var nodes = this.nodes.filter(
               (node) => node.citedBy.length >= this.minimumCitedByAmount
-            )
+            );
 
             // save to localstorage
-            window.localStorage.setItem("data", JSON.stringify(nodes))
-            window.location.href = "graph"
+            window.localStorage.setItem("data", JSON.stringify(nodes));
+            window.location.href = "graph";
           }
         } catch (e) {
-          console.error("ERROR:", e)
-          var status = e.response ? e.response.status : null
+          console.error("ERROR:", e);
+          var status = e.response ? e.response.status : null;
           if (status) {
             // skip this file
-            this.statusLog = "File ERROR. Skipping..."
-            this.errors.push(file)
-            var that = this
+            this.statusLog = "File ERROR. Skipping...";
+            this.errors.push(file);
+            var that = this;
             setTimeout(function () {
               if (i < files.length - 1) {
-                that.startProcessFullText(i + 1)
+                that.startProcessFullText(i + 1);
               } else {
-                that.processing = false
+                that.processing = false;
                 // console.log(that.xmlFiles)
               }
-            }, 500)
+            }, 500);
           } else {
             // try again
             // console.log("trying again")
@@ -311,22 +312,22 @@ new Vue({
               (i + 1) +
               " of " +
               files.length +
-              " files..."
-            this.startProcessFullText(i, true)
+              " files...";
+            this.startProcessFullText(i, true);
           }
         }
       } else {
-        alert("No files selected.")
+        alert("No files selected.");
       }
     },
     onBeforeUnload(e) {
-      e.returnValue = "In progress."
+      e.returnValue = "In progress.";
     },
     addBeforeUnloadEvent() {
-      addEventListener("beforeunload", this.onBeforeUnload)
+      addEventListener("beforeunload", this.onBeforeUnload);
     },
     removeBeforeUnloadEvent() {
-      removeEventListener("beforeunload", this.onBeforeUnload)
+      removeEventListener("beforeunload", this.onBeforeUnload);
     },
   },
-})
+});

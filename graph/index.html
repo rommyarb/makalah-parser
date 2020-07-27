@@ -97,7 +97,15 @@
           class="md-raised md-dense"
           style="background-color: #05ae1c; height: 24px;"
         >
-          <small style="color: white;">DOWNLOAD JSON FILE</small></md-button
+          <small style="color: white;">DOWNLOAD Json File</small></md-button
+        >
+        <md-button
+          v-if="jsonData.length>0"
+          @click="downloadExcelFile"
+          class="md-raised md-dense"
+          style="background-color: #05ae1c; height: 24px;"
+        >
+          <small style="color: white;">DOWNLOAD Excel File</small></md-button
         >
       </div>
       <div style="height: 10px;"></div>
@@ -145,6 +153,7 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/fast-xml-parser/3.17.1/parser.min.js"></script> -->
     <script src="../js/lib/FileSaver.min.js"></script>
     <script src="https://unpkg.com/gridjs/dist/gridjs.production.min.js"></script>
+    <script src="../js/lib/xlsx.full.min.js"></script>
     <script src="../js/graph-vue.js"></script>
   </body>
 </html>
